@@ -1,7 +1,35 @@
 #! /bin/bash
+
 nameApp="Dnsmanager"
+FileDnsName="ListDns.txt"
+
 # ---- function bash. ----
+function CreateFile () {
+    echo "CreateFile"
+    echo "-- list server Dns --" > ./ListDns.txt
+
+}
+function loadFile () {
+    echo "loadFile"
+    for FILE in `find . -iname "$FileDnsName" -type f`
+    do
+        #Some function on the file
+        FileDns=`cat ListDns.txt`  
+        echo "$FileDns" 
+        break
+    done
+}
+function Filecheck(){
+    loopn=$(find . -iname "$FileDnsName" -type f)
+    if [[ $loopn == "" ]]; then
+        CreateFile
+    else
+        loadFile
+    fi
+}
+
 function Main () {
+    Filecheck
     Sectionname="Main App"
 	while true 
 		do
@@ -26,7 +54,7 @@ function Main () {
 				else
 					#echo "${NUM} is not a number"
 					if [ "$Selectmenu" = "q" ] || [ "$Selectmenu" = "Q" ]; then
-						echo "exit $nameApp"
+						echo "exit App $nameApp"
 						exit
 					elif [ "$Selectmenu" = "h" ] || [ "$Selectmenu" = "h" ]; then
 						echo "Test help app "
@@ -38,14 +66,13 @@ function Main () {
 }
 
 # ---- First run it in bash. ----
-echo "run command => chmod +x ./$me"
+#echo "run command => chmod +x ./Dnsmanager.sh"
 #Checking sudo access
 if [ $EUID != 0 ]; then
     sudo "$0" "$@"
     exit $?
 else
-  # Checking chmod file
+    # Checking chmod file
     Main
-  fi
 fi
 
