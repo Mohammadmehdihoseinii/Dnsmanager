@@ -2,10 +2,10 @@
 
 nameApp="Dnsmanager"
 FileDnsName="ListDns.txt"
-
+declare -A List_Server=()
 # ---- function bash. ----
+# ---- strat:function file. ----
 function CreateFile () {
-    echo "CreateFile"
     echo "-- list server Dns --" > ./ListDns.txt
     echo "Google;8.8.8.8;8.8.4.4" >> ./ListDns.txt
     echo "Cloudflare;1.1.1.1;1.0.0.1" >> ./ListDns.txt
@@ -17,15 +17,20 @@ function CreateFile () {
     echo "RadarGame;10.202.10.10;10.202.10.11" >> ./ListDns.txt
     echo "Online403;10.202.10.102;10.202.10.202" >> ./ListDns.txt
     echo "Begzar;185.55.226.26;185.55.226.25" >> ./ListDns.txt
+    loadFile
 }
 function loadFile () {
-    echo "loadFile"
     for FILE in `find . -iname "$FileDnsName" -type f`
     do
         #Some function on the file
-        FileDns=`cat ListDns.txt`  
-        echo "$FileDns" 
-        break
+        #echo "FILE = $FILE"
+        for fileline in $(cat "$FILE"); do
+            if [[ "$fileline" != "#"* ]]; then 
+                IFS=';'
+                splitline=($fileline)
+                List_Server["${splitline[0]}"]="${splitline[1]};${splitline[2]}"
+            fi
+        done
     done
 }
 function Filecheck(){
@@ -36,6 +41,7 @@ function Filecheck(){
         loadFile
     fi
 }
+# ---- End:function file. ----
 
 function Main () {
     Filecheck
@@ -55,7 +61,7 @@ function Main () {
 				if [[ $Selectmenu =~ ^[0-9]+$ ]]; then
 					#echo "${Selectmenu} is a number"
 					if [ $Selectmenu == 1 ]; then
-						echo "Select Dns"
+						    echo "Select Dns"
 					else
 						echo "Number over list"
 					fi
