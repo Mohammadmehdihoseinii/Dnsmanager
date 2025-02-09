@@ -163,6 +163,8 @@ function  Select_Dns() {
     }
 	echo "Analysis Dns ..."
 	#update Max Select Dns
+    MinPing=9999
+    select_best_server=0
 	MaxSelectDns=${#List_Server[@]}
 	# نمایش داده‌ها
     for key in "${!List_Server[@]}"; do
@@ -172,13 +174,19 @@ function  Select_Dns() {
         #echo "Name: ${Dns[0]}, server1: ${Dns_Server[0]}, server2: ${Dns_Server[1]}"
         location=$(geoiplookup  "${Dns_Server[0]}")
 		Total=($(TestDns "${Dns_Server[0]}") + $(TestDns  "${Dns_Server[1]}"))
+        if (( $(printf "%.0f" "$Total") < $(printf "%.0f" "$MinPing") && $(printf "%.0f" "$Total") > 0 )); then
+            #echo "$Total < $MinPing && $Total > 0"
+            MinPing=$Total
+            select_best_server=$key
+        fi
         echo -e "$key - ${Dns[0]} = $Total"
     done
 	echo "d. Defult Dns"
+	echo "b. best dns (${List_Server[$select_best_server]})"
 	echo "q. Quit "
 	read -p "select in menu: " Selectmenu
 	#clear
-    if [[ "$Selectmenu" =~ ^[0-9]+$ ]] && (( Selectmenu >= 0 && Selectmenu <= MaxSelectDns )); then
+    if [ $Selectmenu >= 0 ] && [ $Selectmenu <= $MaxSelectDns]; then
         IFS=";" read -r -a Dns_Server <<< "${List_Server[$Selectmenu]}"
         echo -e "${List_Server[$Selectmenu]}"
         SetDns $Selectmenu
@@ -188,6 +196,8 @@ function  Select_Dns() {
             Reset_Dns_All_File
 		elif [ "$Selectmenu" = "q" ] || [ "$Selectmenu" = "Q" ]; then
 			echo "back menu"
+		elif [ "$Selectmenu" = "b" ] || [ "$Selectmenu" = "B" ]; then
+			SetDns $select_best_server
 		fi
 	fi
 }
