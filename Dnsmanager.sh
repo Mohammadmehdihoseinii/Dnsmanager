@@ -7,7 +7,16 @@ FileDnsName="ListDns.txt"
 function CreateFile () {
     echo "CreateFile"
     echo "-- list server Dns --" > ./ListDns.txt
-
+    echo "Google;8.8.8.8;8.8.4.4" >> ./ListDns.txt
+    echo "Cloudflare;1.1.1.1;1.0.0.1" >> ./ListDns.txt
+    echo "OpenDNS;185.55.226.26;185.55.226.25" >> ./ListDns.txt
+    echo "Neustar;156.154.70.5;156.154.71.5" >> ./ListDns.txt
+    echo "SafeDNS;195.46.39.39;195.46.39.40" >> ./ListDns.txt
+    echo "Shecan;178.22.122.100;185.51.200.2" >> ./ListDns.txt
+    echo "Electro;78.157.42.100;78.157.42.101" >> ./ListDns.txt
+    echo "RadarGame;10.202.10.10;10.202.10.11" >> ./ListDns.txt
+    echo "Online403;10.202.10.102;10.202.10.202" >> ./ListDns.txt
+    echo "Begzar;185.55.226.26;185.55.226.25" >> ./ListDns.txt
 }
 function loadFile () {
     echo "loadFile"
