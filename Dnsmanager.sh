@@ -286,7 +286,7 @@ function TestAllDns(){
                 ((count++))
             done
             #echo "nslookup $chackurls ${Dns_Server[1]} = $return_function"
-            read -p "set in host(y/n)?" Selectmenu 
+            read -p "set in host(y/n/q)?" Selectmenu 
 
             if test -z "$Selectmenu"; then
                 echo "\$ input is null. input => ($Selectmenu)"
@@ -296,6 +296,8 @@ function TestAllDns(){
                     return 0
                 elif [ "$Selectmenu" = "n" ] || [ "$Selectmenu" = "N" ]; then
                     echo ""
+                elif [ "$Selectmenu" = "q" ] || [ "$Selectmenu" = "Q" ]; then
+                    return 0
                 else
                     echo "input not valid"
                 fi
@@ -311,7 +313,6 @@ function Main () {
     Sectionname="Main App"
 	while true 
 		do
-            clear
 			echo "--------------- Menu App ---------------"
             echo "Menu for $Sectionname
     1. Select Dns
@@ -319,6 +320,7 @@ function Main () {
     3. add Dns to host
     q. Quit "
 			read -p "select in menu: " Selectmenu
+            clear
 			#Checking if variable is empty
 			if test -z "$Selectmenu"; then
 				echo "\$ input is null. input => ($Selectmenu)"
