@@ -4,7 +4,8 @@ nameApp="Dnsmanager"
 FileDnsName="ListDns.txt"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 DIRFile="$DIR/$nameApp"
-FileEdit='/etc/resolv.conf'
+resolvFile='/etc/resolv.conf'
+hostFile='/etc/hosts'
 declare -A List_Server=()
 select_Server=""
 # ---- function bash. ----
@@ -17,7 +18,7 @@ function createdata(){
             echo "#list-server-Dns" > /$DIRFile/ListDns.txt
             echo "Google;8.8.8.8;8.8.4.4" >> /$DIRFile/ListDns.txt
             echo "Cloudflare;1.1.1.1;1.0.0.1" >> /$DIRFile/ListDns.txt
-            echo "OpenDNS;208.67.222.222;208.67.220.220" >> /$DIRFile/ListDns.txt
+            echo "OpenDNS;208.67.220.220;208.67.222.222" >> /$DIRFile/ListDns.txt
             echo "Neustar;156.154.70.5;156.154.71.5" >> /$DIRFile/ListDns.txt
             echo "SafeDNS;195.46.39.39;195.46.39.40" >> /$DIRFile/ListDns.txt
             echo "Shecan;178.22.122.100;185.51.200.2" >> /$DIRFile/ListDns.txt
@@ -25,6 +26,14 @@ function createdata(){
             echo "RadarGame;10.202.10.10;10.202.10.11" >> /$DIRFile/ListDns.txt
             echo "Online403;10.202.10.102;10.202.10.202" >> /$DIRFile/ListDns.txt
             echo "Begzar;185.55.226.26;185.55.226.25" >> /$DIRFile/ListDns.txt
+            echo "quad9;9.9.9.9;149.112.112.112" >> /$DIRFile/ListDns.txt
+            echo "alternate-dns;76.76.19.19;76.223.122.150" >> /$DIRFile/ListDns.txt
+            echo "cleanbrowsing;185.228.168.168;185.228.169.168" >> /$DIRFile/ListDns.txt
+            echo "opennic_1;195.10.195.195;152.53.15.127" >> /$DIRFile/ListDns.txt
+            echo "opennic_2;37.252.191.197;94.247.43.254" >> /$DIRFile/ListDns.txt
+            echo "yandex;77.88.8.8;77.88.8.1" >> /$DIRFile/ListDns.txt
+            echo "Level3;209.244.0.3;209.244.0.4" >> /$DIRFile/ListDns.txt
+            echo "dnswatch;84.200.69.80;84.200.70.40" >> /$DIRFile/ListDns.txt
             #append log
             echo "Create db Dns " >> /$DIRFile/log.txt
             sudo yum install GeoIP GeoIP-data -y
@@ -83,25 +92,25 @@ function Filecheck(){
 # ---- End:function file. ----
 # ---- strat:function work dns. ----
 function Reset_Dns_All_File () {
-	echo "# This is /run/systemd/resolve/resolv.conf managed by man:systemd-resolved(8)." > $FileEdit
-	echo "# Do not edit." >> $FileEdit
-	echo "# " >> $FileEdit
-	echo "# This file might be symlinked as /etc/resolv.conf. If you're looking at" >> $FileEdit
-	echo "# /etc/resolv.conf and seeing this text, you have followed the symlink." >> $FileEdit
-	echo "# " >> $FileEdit
-	echo "# This is a dynamic resolv.conf file for connecting local clients directly to" >> $FileEdit
-	echo "# all known uplink DNS servers. This file lists all configured search domains." >> $FileEdit
-	echo "# " >> $FileEdit
-	echo "# Third party programs should typically not access this file directly, but only" >> $FileEdit
-	echo "# through the symlink at /etc/resolv.conf. To manage man:resolv.conf(5) in a" >> $FileEdit
-	echo "# different way, replace this symlink by a static file or a different symlink." >> $FileEdit
-	echo "# " >> $FileEdit
-	echo "# See man:systemd-resolved.service(8) for details about the supported modes of" >> $FileEdit
-	echo "# operation for /etc/resolv.conf." >> $FileEdit
-	echo " " >> $FileEdit
-	echo "nameserver 127.0.0.53" >> $FileEdit
-	echo "options edns0 trust-ad" >> $FileEdit
-	echo "search ." >> $FileEdit
+	echo "# This is /run/systemd/resolve/resolv.conf managed by man:systemd-resolved(8)." > $resolvFile
+	echo "# Do not edit." >> $resolvFile
+	echo "# " >> $resolvFile
+	echo "# This file might be symlinked as /etc/resolv.conf. If you're looking at" >> $resolvFile
+	echo "# /etc/resolv.conf and seeing this text, you have followed the symlink." >> $resolvFile
+	echo "# " >> $resolvFile
+	echo "# This is a dynamic resolv.conf file for connecting local clients directly to" >> $resolvFile
+	echo "# all known uplink DNS servers. This file lists all configured search domains." >> $resolvFile
+	echo "# " >> $resolvFile
+	echo "# Third party programs should typically not access this file directly, but only" >> $resolvFile
+	echo "# through the symlink at /etc/resolv.conf. To manage man:resolv.conf(5) in a" >> $resolvFile
+	echo "# different way, replace this symlink by a static file or a different symlink." >> $resolvFile
+	echo "# " >> $resolvFile
+	echo "# See man:systemd-resolved.service(8) for details about the supported modes of" >> $resolvFile
+	echo "# operation for /etc/resolv.conf." >> $resolvFile
+	echo " " >> $resolvFile
+	echo "nameserver 127.0.0.53" >> $resolvFile
+	echo "options edns0 trust-ad" >> $resolvFile
+	echo "search ." >> $resolvFile
 }
 function Chack_Dns () {
 	echo "Chaking Dns ..."
@@ -119,16 +128,16 @@ function SetDns() {
     IFS="=" read -r -a Dns <<< "${List_Server[$key]}"
     #Dns[0]=namedns /Dns[1]= server1;server2
     IFS=";" read -r -a Dns_Server <<< "${Dns[1]}"
-	#echo -e "nameserver $Dns_1 \nnameserver $Dns_2" > $FileEdit
+	#echo -e "nameserver $Dns_1 \nnameserver $Dns_2" > $resolvFile
 	while read -r CURRENT_LINE
 		do
 			if [[ $CURRENT_LINE == *'nameserver '* ]];then
-				#sed -i 's/nameserver.*/nameserver '$Dns_1'\nnameserver '$Dns_2'/' $FileEdit
+				#sed -i 's/nameserver.*/nameserver '$Dns_1'\nnameserver '$Dns_2'/' $resolvFile
 				if [[ $var_Find -eq 0 ]]; then
-					sed -i.bak '/nameserver /d' $FileEdit
-					echo -e "nameserver ${Dns_Server[0]}\nnameserver ${Dns_Server[1]}" >> $FileEdit
+					sed -i.bak '/nameserver /d' $resolvFile
+					echo -e "nameserver ${Dns_Server[0]}\nnameserver ${Dns_Server[1]}" >> $resolvFile
 					((var_Find++))
-					#sed -i 's/nameserver.*/nameserver '$Dns_1'\nnameserver '$Dns_2'/' $FileEdit
+					#sed -i 's/nameserver.*/nameserver '$Dns_1'\nnameserver '$Dns_2'/' $resolvFile
 				fi
 				
 			fi
@@ -144,7 +153,6 @@ function SetDns() {
 		echo "plz enter Defult Dns"
 	fi
 }
-
 function  Select_Dns() {
     function  TestDns() {
         local Server=$1  # First argument
@@ -179,7 +187,7 @@ function  Select_Dns() {
             MinPing=$Total
             select_best_server=$key
         fi
-        echo -e "$key - ${Dns[0]} = $Total"
+        echo -e "$key -(${location:23:2}) ${Dns[0]} = $Total"
     done
 	echo "d. Defult Dns"
 	echo "b. best dns (${List_Server[$select_best_server]})"
@@ -202,18 +210,115 @@ function  Select_Dns() {
 	fi
 }
 # ---- End:function work dns. ----
+# ---- strat:function work host. ----
+function Reset_host_File () {
+	echo "# Loopback entries; do not change." > $hostFile
+	echo "# For historical reasons, localhost precedes localhost.localdomain:" >> $hostFile
+	echo "127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4" >> $hostFile
+	echo "::1         localhost localhost.localdomain localhost6 localhost6.localdomain6" >> $hostFile
+	echo "# See hosts(5) for proper format and other examples:" >> $hostFile
+	echo "# 192.168.1.10 foo.example.org foo" >> $hostFile
+	echo "# 192.168.1.13 bar.example.org bar" >> $hostFile
+	echo " " >> $hostFile
+}
+function Set_host(){
+    local result_host=$1
+    names=$(echo "$result_host" | jq -r '.name')
+    ip_count=$(echo "$result_host" | jq '.ip | length')
+    ips=($(echo "$result_host" | jq -r '.ip[]'))
+    count=1
+    for ip in "${ips[@]}"; do
+        echo "$ip $names" >> $hostFile
+        return 0
+        ((count++))
+    done
+
+}
+function sub_bac_host(){
+    if [ -f "/$DIRFile/hostbac" ]; then
+        read -p "File found! repare file(y/n)?" Selectmenu 
+        if test -z "$Selectmenu"; then
+            echo "\$ input is null. input => ($Selectmenu)"
+        else
+            if [[ $Selectmenu =~ ^[0-9]+$ ]]; then
+                echo "Number over list"
+            else
+                if [ "$Selectmenu" = "y" ] || [ "$Selectmenu" = "Y" ]; then
+                    cp $hostFile /$DIRFile/hostbac
+                elif [ "$Selectmenu" = "n" ] || [ "$Selectmenu" = "N" ]; then
+                    echo "skip file bac"
+                fi
+                Set_host "$1"
+            fi
+        fi
+    else   
+        cp $hostFile /$DIRFile/hostbac
+    fi 
+}
+function TestAllDns(){
+    function Chack_dns_host(){
+        local chackurls=$1
+        local chackServer=$2
+        #echo "nslookup $chackurls $chackServer"
+        resolvedIP=$(nslookup $chackurls $chackServer |
+            sed -n 's/^Address: //p' |
+            jq -Rs --arg name "$chackurls" '{ name: $name ,ip: ( rtrimstr("\n") | split("\n") )}')
+        #echo "resolvedIP= $resolvedIP"
+        #echo "Name: $(echo "$resolvedIP" | jq -r '.name')"
+        #echo "ip: $(echo "$resolvedIP" | jq -r '.ip[]')"
+        echo $resolvedIP
+    }
+    chackurls="mirrors.fedoraproject.org"
+    # نمایش داده‌ها
+    for key in "${!List_Server[@]}"; do
+        IFS="=" read -r -a Dns <<< "${List_Server[$key]}"
+        #Dns[0]=namedns /Dns[1]= server1;server2
+        IFS=";" read -r -a Dns_Server <<< "${Dns[1]}"
+        #echo "Name: ${Dns[0]}, server1: ${Dns_Server[0]}, server2: ${Dns_Server[1]}"
+        result_host=$(Chack_dns_host ${chackurls} ${Dns_Server[0]})
+        ip_count=$(echo "$result_host" | jq '.ip | length')
+        ips=($(echo "$result_host" | jq -r '.ip[]'))
+        if ((ip_count > 0));then
+            count=1
+            echo "$key - ${Dns[0]}"
+            for ip in "${ips[@]}"; do
+                echo "  ip[$count/$ip_count]: $ip"
+                ((count++))
+            done
+            #echo "nslookup $chackurls ${Dns_Server[1]} = $return_function"
+            read -p "set in host(y/n)?" Selectmenu 
+
+            if test -z "$Selectmenu"; then
+                echo "\$ input is null. input => ($Selectmenu)"
+            else
+                if [ "$Selectmenu" = "y" ] || [ "$Selectmenu" = "Y" ]; then
+                    sub_bac_host "$result_host"
+                    return 0
+                elif [ "$Selectmenu" = "n" ] || [ "$Selectmenu" = "N" ]; then
+                    echo ""
+                else
+                    echo "input not valid"
+                fi
+            fi
+        fi
+    done
+}
+
+# ---- End:function work host. ----
+
 function Main () {
     Filecheck
     Sectionname="Main App"
 	while true 
 		do
+            clear
 			echo "--------------- Menu App ---------------"
             echo "Menu for $Sectionname
     1. Select Dns
     2. Chack Dns
+    3. add Dns to host
     q. Quit "
 			read -p "select in menu: " Selectmenu
-			clear
 			#Checking if variable is empty
 			if test -z "$Selectmenu"; then
 				echo "\$ input is null. input => ($Selectmenu)"
@@ -224,6 +329,8 @@ function Main () {
                         Select_Dns
                     elif [ $Selectmenu == 2 ]; then
                         Chack_Dns
+                    elif [ $Selectmenu == 3 ]; then
+                        TestAllDns
 					else
 						echo "Number over list"
 					fi
