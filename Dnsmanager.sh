@@ -1,5 +1,4 @@
 #! /bin/bash
-
 nameApp="Dnsmanager"
 FileDnsName="ListDns.txt"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -276,13 +275,14 @@ function TestAllDns(){
         IFS=";" read -r -a Dns_Server <<< "${Dns[1]}"
         #echo "Name: ${Dns[0]}, server1: ${Dns_Server[0]}, server2: ${Dns_Server[1]}"
         result_host=$(Chack_dns_host ${chackurls} ${Dns_Server[0]})
+        location=$(geoiplookup  ${Dns_Server[0]})
         ip_count=$(echo "$result_host" | jq '.ip | length')
         ips=($(echo "$result_host" | jq -r '.ip[]'))
         if ((ip_count > 0));then
             count=1
-            echo "$key - ${Dns[0]}"
+            echo "$key -(${location:23:2}) ${Dns[0]}"
             for ip in "${ips[@]}"; do
-                echo "  ip[$count/$ip_count]: $ip"
+                echo "  [$count/$ip_count]: $ip"
                 ((count++))
             done
             #echo "nslookup $chackurls ${Dns_Server[1]} = $return_function"
