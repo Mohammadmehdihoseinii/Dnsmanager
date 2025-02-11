@@ -122,7 +122,7 @@ function Chack_Dns () {
  	systemd-resolve --status | grep "DNS Servers"
 }
 function SetDns() {
-    key="$1"
+    local key="$1"
 	var_Find=0;
     IFS="=" read -r -a Dns <<< "${List_Server[$key]}"
     #Dns[0]=namedns /Dns[1]= server1;server2
@@ -193,9 +193,9 @@ function  Select_Dns() {
 	echo "q. Quit "
 	read -p "select in menu: " Selectmenu
 	#clear
-    if [ $Selectmenu >= 0 ] && [ $Selectmenu <= $MaxSelectDns]; then
+    if (( ( $Selectmenu >= 0 ) && ( $Selectmenu < $MaxSelectDns ) )); then
         IFS=";" read -r -a Dns_Server <<< "${List_Server[$Selectmenu]}"
-        echo -e "${List_Server[$Selectmenu]}"
+        #echo "${List_Server[$Selectmenu]}"
         SetDns $Selectmenu
 	else
 		echo "${Selectmenu} is not a number"
